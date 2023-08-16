@@ -33,6 +33,33 @@ FROM StatusCounts;
 
 
 
+-- Crie uma CTE com todas as combinações possíveis
+WITH AllCombinations AS (
+    SELECT DISTINCT
+        'model' AS resource_type,
+        'error' AS status,
+        TO_CHAR(DATEADD(DAY, seq4(), '1753-01-01'), 'DD-MM-YYYY') AS data_formatada
+    FROM TABLE(GENERATOR(ROWCOUNT => 2000)) -- Isso gera datas até o ano atual, você pode ajustar conforme necessário
+)
+
+-- Faça um LEFT JOIN entre as combinações e os resultados reais
+SELECT 
+    ac.resource_type,
+    ac.status,
+    ac.data_formatada,
+    COUNT(dr.status) AS status_count
+FROM AllCombinations ac
+LEFT JOIN DBT.PUBLIC.DBT_RESULTS dr ON ac.resource_type = dr.resource_type
+                                  AND ac.status = dr.status
+                                  AND ac.data_formatada = TO_CHAR(TO_TIMESTAMP(dr.started_at), 'DD-MM-YYYY')
+WHERE ac.resource_type = 'model'
+  AND ac.status = 'error'
+GROUP BY ac.resource_type, ac.status, ac.data_formatada
+ORDER BY ac.data_formatada;
+
+
+
+
 
 
 
