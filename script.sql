@@ -30,6 +30,11 @@ SELECT
     CASE WHEN total_status = 0 THEN null ELSE success_count::FLOAT / total_status * 100 END AS porcentagem
 FROM StatusCounts;
 
+------------------------
+
+'{{ parsed_result_dict.get('status') }}',
+                            '{{ parsed_result_dict.get('message') | replace("'", "''") }}',
+
 
 
 
