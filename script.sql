@@ -101,6 +101,11 @@ FROM DBT.PUBLIC.DBT_RESULTS
 WHERE resource_type= 'test'
     AND status = 'error';
 
+    ----------------
+
+    '{{ parsed_result_dict.get('status') }}',
+                            '{{ parsed_result_dict.get('message') | replace("'", "''") }}',
+
 
 
 
