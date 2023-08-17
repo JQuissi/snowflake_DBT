@@ -57,7 +57,44 @@ WHERE ac.resource_type = 'model'
 GROUP BY ac.resource_type, ac.status, ac.data_formatada
 ORDER BY ac.data_formatada;
 
+------------------
 
+
+
+SELECT 
+    unique_id
+    , database_name
+    , schema_name
+    , name
+    , resource_type
+    , status
+FROM DBT.PUBLIC.DBT_RESULTS
+WHERE resource_type= 'test';
+
+
+SELECT 
+    unique_id
+    , database_name
+    , schema_name
+    , name
+    , resource_type
+    , status
+    , started_at
+FROM DBT.PUBLIC.DBT_RESULTS
+WHERE resource_type= 'test'
+    AND status = 'success';
+
+SELECT 
+    unique_id
+    , database_name
+    , schema_name
+    , name
+    , resource_type
+    , status
+    , started_at
+FROM DBT.PUBLIC.DBT_RESULTS
+WHERE resource_type= 'test'
+    AND status = 'error';
 
 
 
