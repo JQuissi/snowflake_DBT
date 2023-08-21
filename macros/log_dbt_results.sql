@@ -2,12 +2,7 @@
     {%- if execute -%}
         {%- set parsed_results = parse_dbt_results(results) -%}
         {%- if parsed_results | length  > 0 -%}
-
-            {# {%- set source_relation = adapter.get_relation(
-                    database = source('jaffle_shop', 'dbt_results').database,
-                    schema = source('jaffle_shop', 'dbt_results').schema,
-                    identifier = source('jaffle_shop', 'dbt_results').name) -%} #}
-
+    
             {%- set source_relation = adapter.get_relation(
                 database = "DBT",
                 schema = "public",
