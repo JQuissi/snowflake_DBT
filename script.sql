@@ -235,3 +235,28 @@ GROUP BY
 HAVING
   -- Se algum modelo der erro, o status será erro
   COUNT(CASE WHEN status = 'error' THEN 1 END) > 0
+---------
+
+// A coluna calculada
+VAR status_execucao =
+IF(
+  SUM(
+    FILTER(
+      log_results,
+      log_results[projeto] = controle_processamento[projeto]
+      AND log_results[data_execucao] = controle_processamento[data_ultima_execucao]
+    )[status] = 0,
+    "success",
+    "error"
+  ),
+  "success",
+  "error"
+)
+
+// A tabela principal com a coluna calculada
+RETURN
+  controle_processamento
+    WITH
+    [status] = status_execucao
+    ORDER BY
+      [projeto]
