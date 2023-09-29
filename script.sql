@@ -213,3 +213,25 @@ RETURN
   controle_processamento
     WITH
     [status] = status_execucao
+
+-----------------------------------
+
+SELECT
+  projeto,
+  data_ultima_execucao,
+  -- A coluna calculada
+  status_execucao AS status
+FROM
+  controle_processamento
+LEFT JOIN
+  log_results
+ON
+  controle_processamento.projeto = log_results.projeto
+AND
+  controle_processamento.data_ultima_execucao = log_results.data_execucao
+GROUP BY
+  controle_processamento.projeto,
+  controle_processamento.data_ultima_execucao
+HAVING
+  -- Se algum modelo der erro, o status será erro
+  COUNT(CASE WHEN status = 'error' THEN 1 END) > 0
