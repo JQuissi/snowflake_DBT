@@ -166,4 +166,26 @@ IF(
 )
 
 
+-----------------------------------
+
+StatusProjeto = 
+VAR ProjetoAtual = 'TabelaProjetos'[NomeProjeto]
+VAR UltimaDataExecucaoProjeto = CALCULATE(MAX('TabelaProjetos'[DataUltimaExecucao]), 'TabelaProjetos'[NomeProjeto] = ProjetoAtual)
+VAR ProjetosComErro =
+    CALCULATETABLE(
+        FILTER(
+            'TabelaStatusModelos',
+            'TabelaStatusModelos'[Projeto] = ProjetoAtual &&
+            'TabelaStatusModelos'[DataStatus] = UltimaDataExecucaoProjeto &&
+            'TabelaStatusModelos'[Status] = "Erro"
+        ),
+        'TabelaProjetos'[NomeProjeto] = ProjetoAtual
+    )
+RETURN
+IF(
+    COUNTROWS(ProjetosComErro) > 0 || 
+    COUNTROWS(FILTER('TabelaStatusModelos', 'TabelaStatusModelos'[Projeto] = ProjetoAtual && 'TabelaStatusModelos'[Status] = "Sucesso")) = 0,
+    "Erro",
+    "Sucesso"
+)
 
