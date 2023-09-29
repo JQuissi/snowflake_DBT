@@ -260,3 +260,41 @@ RETURN
     [status] = status_execucao
     ORDER BY
       [projeto]
+
+---------------------------------
+
+// A coluna calculada
+WITH status_execucao AS
+  (
+    SELECT
+      controle_processamento.projeto AS projeto,
+      controle_processamento.data_ultima_execucao AS data_ultima_execucao,
+      IF(
+        SUM(
+          FILTER(
+            log_results,
+            log_results.projeto = controle_processamento.projeto
+            AND log_results.data_execucao = controle_processamento.data_ultima_execucao
+          )[status] <> "error",
+        "success",
+        "error"
+      ) AS status
+    FROM
+      controle_processamento
+    LEFT JOIN
+      log_results
+    ON
+      controle_processamento.projeto = log_results.projeto
+      AND controle_processamento.data_ultima_execucao = log_results.data_execucao
+    GROUP BY
+      controle_processamento.projeto,
+      controle_processamento.data_ultima_execucao
+  )
+
+// A tabela principal com a coluna calculada
+SELECT
+  *
+FROM
+  status_execucao
+ORDER BY
+  projeto
