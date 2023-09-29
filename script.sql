@@ -139,6 +139,31 @@ IF(
     "Sucesso"
 )
 
+----------------------
+
+
+StatusProjeto = 
+VAR UltimaDataExecucao = 'TabelaProjetos'[DataUltimaExecucao]
+VAR StatusModelos =
+    SUMMARIZE(
+        'TabelaStatusModelos',
+        'TabelaStatusModelos'[Projeto],
+        'TabelaStatusModelos'[DataStatus],
+        'TabelaStatusModelos'[Status]
+    )
+VAR ProjetosComErro =
+    FILTER(
+        StatusModelos,
+        [DataStatus] = UltimaDataExecucao &&
+        [Status] = "Erro"
+    )
+RETURN
+IF(
+    COUNTROWS(ProjetosComErro) > 0 || 
+    COUNTROWS(FILTER(StatusModelos, [Status] = "Sucesso")) = 0,
+    "Erro",
+    "Sucesso"
+)
 
 
 
