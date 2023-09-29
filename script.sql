@@ -108,5 +108,37 @@ WHERE resource_type= 'test'
 
 
 
+-------------------
+    
+    StatusProjeto = 
+VAR UltimaDataExecucao = 'TabelaProjetos'[DataUltimaExecucao]
+VAR ProjetosComErro =
+    CALCULATETABLE(
+        SUMMARIZECOLUMNS(
+            'TabelaProjetos'[NomeProjeto],
+            'TabelaStatusModelos'[DataStatus],
+            "ErroPresente",
+            IF(
+                COUNTROWS(
+                    FILTER(
+                        'TabelaStatusModelos',
+                        'TabelaStatusModelos'[DataStatus] = UltimaDataExecucao &&
+                        'TabelaStatusModelos'[Status] = "Erro"
+                    )
+                ) > 0,
+                1,
+                0
+            )
+        ),
+        'TabelaStatusModelos'[DataStatus] = UltimaDataExecucao
+    )
+RETURN
+IF(
+    SUM(ProjetosComErro[ErroPresente]) > 0,
+    "Erro",
+    "Sucesso"
+)
+
+
 
 
